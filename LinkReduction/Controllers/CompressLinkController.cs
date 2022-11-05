@@ -8,8 +8,16 @@ namespace LinkReduction.Controllers
     [Route("[controller]")]
     public class CompressLinkController : Controller
     {
+
         private readonly CompressLinkHandler _handler;
+
+        public CompressLinkController(CompressLinkHandler handler)
+        {
+            _handler = handler;
+        }
+
         [HttpPost]
+
         public async Task<IActionResult> Index(string url)
         {
             try

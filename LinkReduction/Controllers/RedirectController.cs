@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using LinkReduction.Handlers;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace LinkReduction.Controllers
 {
@@ -6,14 +8,24 @@ namespace LinkReduction.Controllers
     [Route("")]
     public class RedirectController : Controller
     {
+        private readonly RedirectHandler _handler;
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public IActionResult Index()
+        public async Task<IActionResult> Index(string compressUrl)
         {
-            return Redirect("https://google.com");
+            var link = await _handler.GetLink(compressUrl);
+            if(link.FindStatus)
+            {
+                return Redirect(link.CompresedLink.Link);
+            }
+            else
+            {
+                return NotFound();
+            }
+            
         }
     }
 }
