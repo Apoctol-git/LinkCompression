@@ -11,27 +11,50 @@ namespace LinkReduction.Handlers
     public class CompressLinkHandler
     {
         private readonly DBContext _context;
-        
+
+        public CompressLinkHandler(DBContext context)
+        {
+            _context = context;
+        }
+
         /// <summary>
         /// TODO: Заполнить описание
         /// </summary>
         /// <param name="url"></param>
         /// <returns></returns>
+        /// 
         public async Task<CompresedHandlerResponse> Compress(string url)
         {
             var result = new CompresedHandlerResponse();
             var existedRecord = await TryGetExistLink(url);
-            if (existedRecord == null)
+            result.ValidStatus = ValidateLink(url);
+            if (result.ValidStatus)
             {
-                CompresedLink createdRecord = await CreateCompressLink(url);
-                result.CompresedLink = createdRecord;
-                result.ExistedStatus = false;
+                if (existedRecord == null)
+                {
+                    CompresedLink createdRecord = await CreateCompressLink(url);
+                    result.CompresedLink = createdRecord;
+                    result.ExistedStatus = false;
+                    return result;
+                }
+                result.CompresedLink = existedRecord;
+                result.ExistedStatus = true;
                 return result;
             }
-            result.CompresedLink = existedRecord;
-            result.ExistedStatus = true;
-            return result;
+            else
+            {
+                result.ValidStatus = false;
+                return result;
+            }
         }
+
+        private bool ValidateLink(string url)
+        {
+            var isHttp = url.Substring(0, 4) == "http";
+            var isHttps = url.Substring(0, 5) == "https";
+            return isHttp&& isHttps;
+        }
+
         /// <summary>
         /// Метод спроектирован так, что весь на сервис НЕЛЬЗЯ РАЗВЕРНУТЬ БОЛЬШЕ ОДНОЙ НОДЫ НА БАЗУ. 
         /// Есть пару идей как разобраться с этим вопрос с помощью базы или инфрааструктуры. Но это за рамками ТЗ
@@ -65,9 +88,9 @@ namespace LinkReduction.Handlers
             return result;
         }
 
-        private Task<CompresedLink> TryGetExistLink(string url)
+        private async Task<CompresedLink> TryGetExistLink(string url)
         {
-            return _context.CompresedLinks.FirstOrDefaultAsync(x => x.Link == url);
+            return await _context.CompresedLinks.FirstOrDefaultAsync(x => x.Link == url);
         }
     }
 }
