@@ -6,7 +6,7 @@ namespace LinkReduction.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class CompressLinkController : Controller
+    public class CompressLinkController : ControllerBase
     {
 
         private readonly CompressLinkHandler _handler;

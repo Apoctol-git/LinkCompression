@@ -6,7 +6,7 @@ namespace LinkReduction.Controllers
 {
     [ApiController]
     [Route("")]
-    public class RedirectController : Controller
+    public class RedirectController : ControllerBase
     {
         private readonly RedirectHandler _handler;
 
