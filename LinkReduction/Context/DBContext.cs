@@ -24,9 +24,11 @@ namespace LinkReduction.Context
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            builder.Entity<CompresedLink>().ToTable("CompresedLink");
             base.OnModelCreating(builder);
 
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+            
         }
 
     }

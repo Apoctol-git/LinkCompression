@@ -9,6 +9,12 @@ namespace LinkReduction.Controllers
     public class RedirectController : Controller
     {
         private readonly RedirectHandler _handler;
+
+        public RedirectController(RedirectHandler handler)
+        {
+            _handler = handler;
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -16,15 +22,25 @@ namespace LinkReduction.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(string compressUrl)
         {
-            var link = await _handler.GetLink(compressUrl);
-            if(link.FindStatus)
+            try
             {
-                return Redirect(link.CompresedLink.Link);
+                var link = await _handler.GetLink(compressUrl);
+                if (link.FindStatus)
+                {
+                    return Redirect(link.CompresedLink.Link);
+                }
+                else
+                {
+                    return NotFound();
+                }
+
             }
-            else
+            catch (System.Exception ex)
             {
-                return NotFound();
+
+                return BadRequest(ex.Message+":"+ex.StackTrace);
             }
+
             
         }
     }

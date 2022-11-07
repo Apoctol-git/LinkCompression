@@ -34,10 +34,10 @@ namespace LinkReduction.Controllers
                     return Created(compresedHandlerResponse.CompresedLink.CompressLink, compresedHandlerResponse.CompresedLink);
                 }
             }
-            catch (System.Exception)
+            catch (System.Exception ex)
             {
                 // Если хватит времени - сделать разветвлённую систему ответа
-                return BadRequest();
+                return BadRequest(ex.Message+":"+ex.StackTrace);
             } 
         }
     }
